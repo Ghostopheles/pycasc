@@ -16,3 +16,4 @@ deps/
 dist/
 include/
 lib/
+*.cpp
