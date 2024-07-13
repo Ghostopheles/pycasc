@@ -1,2 +1,2 @@
-cimport pycasc.c_casclib
-from pycasc.c_casclib cimport *
+cimport pycasclib.c_casclib
+from pycasclib.c_casclib cimport *

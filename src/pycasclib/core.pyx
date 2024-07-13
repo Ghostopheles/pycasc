@@ -5,8 +5,8 @@ from libc.string cimport strcpy
 from typing import Union, Tuple, Optional
 from dataclasses import dataclass
 
-cimport pycasc.c_casclib as casclib
-from pycasc.c_casclib cimport *
+cimport pycasclib.c_casclib as casclib
+from pycasclib.c_casclib cimport *
 
 ERROR_STR_MAP = {
     ERROR_SUCCESS: "ERROR_SUCCESS",
