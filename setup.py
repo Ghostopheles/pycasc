@@ -92,11 +92,11 @@ def build(debug: bool):
         extra_link_args = []
 
     setup(
-        name="pycasc",
+        name="pycasclib",
         ext_modules=cythonize(
             Extension(
-                "pycasc.core",
-                sources=["src/pycasc/*.pyx"],
+                "pycasclib.core",
+                sources=["src/pycasclib/*.pyx"],
                 language="c++",
                 libraries=libraries,
                 library_dirs=library_dirs,
