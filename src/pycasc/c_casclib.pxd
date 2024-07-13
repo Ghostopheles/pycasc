@@ -6,6 +6,27 @@ cdef extern from "Python.h":
 cdef extern from "CascPort.h":
     cdef const int MAX_PATH
 
+    cdef const unsigned int ERROR_SUCCESS
+    cdef const unsigned int ERROR_PATH_NOT_FOUND
+    cdef const unsigned int ERROR_ACCESS_DENIED
+    cdef const unsigned int ERROR_INVALID_HANDLE
+    cdef const unsigned int ERROR_NOT_ENOUGH_MEMORY
+    cdef const unsigned int ERROR_NOT_SUPPORTED
+    cdef const unsigned int ERROR_INVALID_PARAMETER
+    cdef const unsigned int ERROR_DISK_FULL
+    cdef const unsigned int ERROR_ALREADY_EXISTS
+    cdef const unsigned int ERROR_INSUFFICIENT_BUFFER
+    cdef const unsigned int ERROR_BAD_FORMAT
+    cdef const unsigned int ERROR_NO_MORE_FILES
+    cdef const unsigned int ERROR_HANDLE_EOF
+    cdef const unsigned int ERROR_CAN_NOT_COMPLETE
+    cdef const unsigned int ERROR_FILE_CORRUPT
+    cdef const unsigned int ERROR_FILE_ENCRYPTED
+    cdef const unsigned int ERROR_FILE_INCOMPLETE
+    cdef const unsigned int ERROR_FILE_OFFLINE
+    cdef const unsigned int ERROR_BUFFER_OVERFLOW
+    cdef const unsigned int ERROR_CANCELLED
+
 cdef extern from "CascLib.h":
     ctypedef unsigned long size_t
     ctypedef unsigned char BYTE

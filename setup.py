@@ -62,7 +62,7 @@ def build(debug: bool):
     libraries = []
     library_dirs = []
     extra_objects = []
-    define_macros = []
+    define_macros = [("CYTHON_LIMITED_API", "1")]
 
     if sys.platform == "win32":
         libraries.extend(static_libraries)
@@ -95,8 +95,8 @@ def build(debug: bool):
         name="pycasc",
         ext_modules=cythonize(
             Extension(
-                "pycasc",
-                sources=["src/pycasc/core.pyx"],
+                "pycasc.core",
+                sources=["src/pycasc/*.pyx"],
                 language="c++",
                 libraries=libraries,
                 library_dirs=library_dirs,
@@ -105,8 +105,9 @@ def build(debug: bool):
                 define_macros=define_macros,
                 extra_compile_args=extra_compile_args,
                 extra_link_args=extra_link_args,
+                py_limited_api=True,
             ),
-            compiler_directives={"language_level": 3, "profile": False},
+            compiler_directives={"language_level": 3, "profile": True},
         ),
         requires=["Cython"],
     )

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel", "cython", "cmake"]
+requires = ["setuptools", "wheel", "Cython>=3.0.0", "cmake", "build"]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]

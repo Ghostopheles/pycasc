@@ -5,98 +5,41 @@ from libc.string cimport strcpy
 from typing import Union, Tuple, Optional
 from dataclasses import dataclass
 
-cimport c_casclib as casclib
-from c_casclib cimport *
+cimport pycasc.c_casclib as casclib
+from pycasc.c_casclib cimport *
 
-class CASCLibException(Exception):
-    pass
-
-class ERROR_SUCCESS(CASCLibException):
-    pass
-
-class ERROR_FILE_NOT_FOUND(CASCLibException):
-    pass
-
-class ERROR_PATH_NOT_FOUND(CASCLibException):
-    pass
-
-class ERROR_ACCESS_DENIED(CASCLibException):
-    pass
-
-class ERROR_INVALID_HANDLE(CASCLibException):
-    pass
-
-class ERROR_NOT_ENOUGH_MEMORY(CASCLibException):
-    pass
-
-class ERROR_NOT_SUPPORTED(CASCLibException):
-    pass
-
-class ERROR_INVALID_PARAMETER(CASCLibException):
-    pass
-
-class ERROR_DISK_FULL(CASCLibException):
-    pass
-
-class ERROR_ALREADY_EXISTS(CASCLibException):
-    pass
-
-class ERROR_INSUFFICIENT_BUFFER(CASCLibException):
-    pass
-
-class ERROR_BAD_FORMAT(CASCLibException):
-    pass
-
-class ERROR_NO_MORE_FILES(CASCLibException):
-    pass
-
-class ERROR_HANDLE_EOF(CASCLibException):
-    pass
-
-class ERROR_CAN_NOT_COMPLETE(CASCLibException):
-    pass
-
-class ERROR_FILE_CORRUPT(CASCLibException):
-    pass
-
-class ERROR_FILE_ENCRYPTED(CASCLibException):
-    pass
-
-class ERROR_FILE_INCOMPLETE(CASCLibException):
-    pass
-
-class ERROR_FILE_OFFLINE(CASCLibException):
-    pass
-
-class ERROR_BUFFER_OVERFLOW(CASCLibException):
-    pass
-
-class ERROR_CANCELLED(CASCLibException):
-    pass
-
-
-ERROR_CODE_MAP = {
-    0:    ERROR_SUCCESS,
-    2:    ERROR_PATH_NOT_FOUND,
-    1:    ERROR_ACCESS_DENIED,
-    9:    ERROR_INVALID_HANDLE,
-    12:   ERROR_NOT_ENOUGH_MEMORY,
-    45:   ERROR_NOT_SUPPORTED,
-    22:   ERROR_INVALID_PARAMETER,
-    28:   ERROR_DISK_FULL,
-    17:   ERROR_ALREADY_EXISTS,
-    55:   ERROR_INSUFFICIENT_BUFFER,
-    1000: ERROR_BAD_FORMAT,
-    1001: ERROR_NO_MORE_FILES,
-    1002: ERROR_HANDLE_EOF,
-    1003: ERROR_CAN_NOT_COMPLETE,
-    1004: ERROR_FILE_CORRUPT,
-    1005: ERROR_FILE_ENCRYPTED,
-    1006: ERROR_FILE_INCOMPLETE,
-    1007: ERROR_FILE_OFFLINE,
-    1008: ERROR_BUFFER_OVERFLOW,
-    1009: ERROR_CANCELLED
+ERROR_STR_MAP = {
+    ERROR_SUCCESS: "ERROR_SUCCESS",
+    ERROR_PATH_NOT_FOUND: "ERROR_PATH_NOT_FOUND",
+    ERROR_ACCESS_DENIED: "ERROR_ACCESS_DENIED",
+    ERROR_INVALID_HANDLE: "ERROR_INVALID_HANDLE",
+    ERROR_NOT_ENOUGH_MEMORY: "ERROR_NOT_ENOUGH_MEMORY",
+    ERROR_NOT_SUPPORTED: "ERROR_NOT_SUPPORTED",
+    ERROR_INVALID_PARAMETER: "ERROR_INVALID_PARAMETER",
+    ERROR_DISK_FULL: "ERROR_DISK_FULL",
+    ERROR_ALREADY_EXISTS: "ERROR_ALREADY_EXISTS",
+    ERROR_INSUFFICIENT_BUFFER:  "ERROR_INSUFFICIENT_BUFFER",
+    ERROR_BAD_FORMAT: "ERROR_BAD_FORMAT",
+    ERROR_NO_MORE_FILES: "ERROR_NO_MORE_FILES",
+    ERROR_HANDLE_EOF: "ERROR_HANDLE_EOF",
+    ERROR_CAN_NOT_COMPLETE: "ERROR_CAN_NOT_COMPLETE",
+    ERROR_FILE_CORRUPT: "ERROR_FILE_CORRUPT",
+    ERROR_FILE_ENCRYPTED: "ERROR_FILE_ENCRYPTED",
+    ERROR_FILE_INCOMPLETE: "ERROR_FILE_INCOMPLETE",
+    ERROR_FILE_OFFLINE: "ERROR_FILE_OFFLINE",
+    ERROR_BUFFER_OVERFLOW: "ERROR_BUFFER_OVERFLOW",
+    ERROR_CANCELLED: "ERROR_CANCELLED",
 }
+
+class CascLibException(Exception):
+    error_code: int
+
+    def __init__(self, error_code: int, message: Optional[str] = None):
+        self.add_note(ERROR_STR_MAP.get(error_code))
+        
+        if message is not None:
+            self.add_note(message)
+
 
 class FileOpenFlags:
     CASC_OPEN_BY_NAME = casclib.CASC_OPEN_BY_NAME
@@ -150,26 +93,26 @@ class FileInfoFull:
 
 
 def _last_error():
-    return ERROR_CODE_MAP.get(casclib.GetCascError())
+    return CascLibException(GetCascError())
 
-cdef _open_file_handle(void* storageHandle, identifier: Union[str, int, bytes], openFlags: int, localeFlags: int, void** fileHandle):
+cdef void _open_file_handle(void* storage_handle, identifier: Union[str, int, bytes], open_flags: int, locale_flags: int, void** file_handle):
     cdef char* filePath
     cdef LPCSTR fileDataId
     cdef BYTE[MD5_HASH_SIZE] key
 
-    if openFlags == FileOpenFlags.CASC_OPEN_BY_NAME:
+    if open_flags == FileOpenFlags.CASC_OPEN_BY_NAME:
         key = identifier.encode('utf-8') # file path
-        if not casclib.CascOpenFile(storageHandle, key, localeFlags, openFlags, fileHandle):
-            raise _last_error()
-    elif openFlags == FileOpenFlags.CASC_OPEN_BY_FILEID:
+        if not casclib.CascOpenFile(storage_handle, key, locale_flags, open_flags, file_handle):
+            raise CascLibException(ERROR_PATH_NOT_FOUND)
+    elif open_flags == FileOpenFlags.CASC_OPEN_BY_FILEID:
         fileDataId = <LPCSTR><size_t>identifier
-        if not casclib.CascOpenFile(storageHandle, fileDataId, localeFlags, openFlags, fileHandle):
-            raise _last_error()
-    elif openFlags & FileOpenFlags.CASC_OPEN_BY_CKEY or openFlags & FileOpenFlags.CASC_OPEN_BY_EKEY:
+        if not casclib.CascOpenFile(storage_handle, fileDataId, locale_flags, open_flags, file_handle):
+            raise CascLibException(ERROR_PATH_NOT_FOUND)
+    elif open_flags & FileOpenFlags.CASC_OPEN_BY_CKEY or open_flags & FileOpenFlags.CASC_OPEN_BY_EKEY:
         if len(identifier) != MD5_HASH_SIZE:
-            raise ERROR_INVALID_PARAMETER(f"CKey or EKey must be a bytes object with length {MD5_HASH_SIZE}")
-        if not casclib.CascOpenFile(storageHandle, key, localeFlags, openFlags, fileHandle):
-            raise _last_error()
+            raise CascLibException(ERROR_INVALID_PARAMETER, message=f"CKey or EKey must be a bytes object with length {MD5_HASH_SIZE}")
+        if not casclib.CascOpenFile(storage_handle, key, locale_flags, open_flags, file_handle):
+            raise CascLibException(ERROR_PATH_NOT_FOUND)
 
 
 cdef class CascFile:
@@ -198,17 +141,6 @@ cdef class CascFile:
 
     @property
     def info(self) -> FileInfoFull:
-
-        """
-        Retrieve file info
-
-        Returns:
-
-            FileInfo: Python object containing information about the requested file if file is present.
-            None: if file failed to open or does not exist.
-
-        """
-
         if self.file_info is not None:
             return self.file_info
 
@@ -262,10 +194,10 @@ cdef class CascFile:
         CascReadFile(self.file_handle, data, file_size, &bytes_read)
 
         if not bytes_read:
-            raise ERROR_CODE_MAP.get(GetCascError())
+            raise _last_error()
 
         if bytes_read < file_size:
-            raise ERROR_FILE_ENCRYPTED
+            raise CascLibException(ERROR_FILE_ENCRYPTED)
 
         self.raw_data = memoryview(data[:bytes_read]).tobytes()
         free(data)
@@ -302,13 +234,13 @@ cdef class CascHandler:
         self.open_files = set()
         self.locale_flags = locale_flags
 
-        self.cache_path = <char *>malloc(len(path) + 1)
+        self.cache_path = <char*>malloc(len(path) + 1)
         strcpy(self.cache_path, path.encode('ascii'))
 
-        self.region = <char *>malloc(len(region) + 1)
+        self.region = <char*>malloc(len(region) + 1)
         strcpy(self.region, region.encode('ascii'))
 
-        self.product = <char *>malloc(len(product) + 1)
+        self.product = <char*>malloc(len(product) + 1)
         strcpy(self.product, product.encode('ascii'))
 
         self.p_args.Size = sizeof(CASC_OPEN_STORAGE_ARGS)
@@ -318,7 +250,7 @@ cdef class CascHandler:
         self.p_args.dwLocaleMask = locale_flags
 
         if not CascOpenStorageEx(NULL, &self.p_args, is_online, &self.storage_handle):
-            raise ERROR_CODE_MAP.get(GetCascError())
+            raise _last_error()
 
     @staticmethod
     def _identifier_to_open_flags(identifier: Union[str, int, bytes]) -> Optional[FileOpenFlags]:
@@ -355,7 +287,9 @@ cdef class CascHandler:
 
         try:
             _open_file_handle(self.storage_handle, identifier, open_flags, self.locale_flags, &file_handle)
-        except CASCLibException:
+        except FileNotFoundError:
+            return False
+        except CascLibException:
             return False
 
         CascCloseFile(file_handle)
