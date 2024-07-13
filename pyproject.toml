@@ -1,27 +1,31 @@
+[project]
+name = "casclib"
+version = "0.0.1"
+description = "Python wrapper for CascLib by Ladislav Zezula"
+authors = [
+    { name="Ghostopheles", email="ghst@ghst.tools"}
+]
+license = {file = "LICENSE"}
+readme = "README.md"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Build Tools",
+
+    "License :: Public Domain",
+
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">= 3.12"
+
+[project.urls]
+Homepage = "https://github.com/Ghostopheles/pycasc"
+Repository = "https://github.com/Ghostopheles/pycasc.git"
+Issues = "https://github.com/Ghostopheles/pycasc/issues"
+
 [build-system]
 requires = ["setuptools", "wheel", "Cython>=3.0.0", "cmake", "build"]
 build-backend = "setuptools.build_meta"
-
-[tool.pytest.ini_options]
-addopts = "--cov=pycasc"
-testpaths = [
-    "tests",
-]
-
-[tool.mypy]
-mypy_path = "src"
-exclude = [
-    "cache/*",
-    "main.py"
-]
-check_untyped_defs = true
-disallow_any_generics = true
-ignore_missing_imports = true
-no_implicit_optional = true
-show_error_codes = true
-strict_equality = true
-warn_redundant_casts = true
-warn_return_any = true
-warn_unreachable = true
-warn_unused_configs = true
-no_implicit_reexport = true
