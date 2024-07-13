@@ -109,7 +109,6 @@ def build(debug: bool):
             ),
             compiler_directives={"language_level": 3, "profile": True},
         ),
-        requires=["Cython"],
     )
 
     print("Succesfully built CASC extension.")
