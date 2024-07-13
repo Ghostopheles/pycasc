@@ -3,7 +3,7 @@ name = "pycasclib"
 version = "0.0.1"
 description = "Python wrapper for CascLib by Ladislav Zezula"
 authors = [
-    { name="Ghostopheles", email="ghst@ghst.tools"}
+    { name="Ghostopheles", email="ghost@ghst.tools"}
 ]
 license = {file = "LICENSE"}
 readme = "README.md"
