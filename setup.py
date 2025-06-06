@@ -22,7 +22,7 @@ def build_casclib(debug: bool):
 
     cmake_defines = [
         f"-DCMAKE_BUILD_TYPE={build_config}",
-        "-DCASC_BUILD_SHARED_LIB=ON",
+        "-DCASC_BUILD_SHARED_LIB=OFF",
         "-DCASC_BUILD_STATIC_LIB=ON",
     ]
 
@@ -32,7 +32,7 @@ def build_casclib(debug: bool):
     status = subprocess.call(["cmake", "..", *cmake_defines])
 
     if status:
-        print("Error building CASCLib. See CMake error above.")
+        print("Error building CascLib. See CMake error above.")
         sys.exit(1)
 
     status = subprocess.check_call(
@@ -40,7 +40,7 @@ def build_casclib(debug: bool):
     )
 
     if status:
-        print("Error building CASCLib. See error above.")
+        print("Error building CascLib. See error above.")
         sys.exit(1)
 
     status = subprocess.call(
@@ -48,8 +48,10 @@ def build_casclib(debug: bool):
     )
 
     if status:
-        print("Error building CASCLib. Error setting install configuration")
+        print("Error building CascLib. Error setting install configuration")
         sys.exit(1)
+
+    print("Successfully built CascLib.")
 
 
 def build(debug: bool):

@@ -26,5 +26,5 @@ Repository = "https://github.com/Ghostopheles/pycasc.git"
 Issues = "https://github.com/Ghostopheles/pycasc/issues"
 
 [build-system]
-requires = ["setuptools", "wheel", "Cython>=3.0.0", "cmake", "build"]
+requires = ["setuptools", "wheel", "Cython>=3.0.0", "cmake>=4.0.0", "build"]
 build-backend = "setuptools.build_meta"
