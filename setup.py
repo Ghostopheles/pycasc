@@ -8,6 +8,7 @@ from setuptools import setup, Extension
 from Cython.Build import cythonize
 
 CWD = os.path.realpath(os.path.dirname(__file__))
+CPP_STD = "c++17"
 
 
 def build_casclib(debug: bool):
@@ -21,6 +22,7 @@ def build_casclib(debug: bool):
     build_config = "Release" if not debug else "Debug"
 
     cmake_defines = [
+        "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
         f"-DCMAKE_BUILD_TYPE={build_config}",
         "-DCASC_BUILD_SHARED_LIB=OFF",
         "-DCASC_BUILD_STATIC_LIB=ON",
@@ -32,7 +34,7 @@ def build_casclib(debug: bool):
     status = subprocess.call(["cmake", "..", *cmake_defines])
 
     if status:
-        print("Error building CascLib. See CMake error above.")
+        print("Error configuring CascLib. See CMake error above.")
         sys.exit(1)
 
     status = subprocess.check_call(
@@ -79,18 +81,18 @@ def build(debug: bool):
 
     # compiler and linker settings
     if platform.system() == "Darwin":
-        extra_compile_args = ["-std=c++17", "-O3"]
+        extra_compile_args = [f"-std={CPP_STD}", "-O3"]
         extra_link_args = []
 
     elif platform.system() == "Windows":
-        extra_compile_args = ["/std:c++17"]
+        extra_compile_args = [f"/std:{CPP_STD}"]
         extra_link_args = []
         if debug:
             extra_compile_args = extra_compile_args.append("/Zi")
             extra_link_args = extra_link_args.extend(["/DEBUG:FULL"])
 
     else:
-        extra_compile_args = ["-std=c++17", "-O3"]
+        extra_compile_args = [f"-std={CPP_STD}", "-O3"]
         extra_link_args = []
 
     setup(
