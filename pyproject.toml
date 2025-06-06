@@ -5,14 +5,13 @@ description = "Python wrapper for CascLib by Ladislav Zezula"
 authors = [
     { name="Ghostopheles", email="ghost@ghst.tools"}
 ]
-license = {file = "LICENSE"}
+license = "Public Domain"
+license-files = ["LICENSE"]
 readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
 
     "Intended Audience :: Developers",
-
-    "License :: Public Domain",
 
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
