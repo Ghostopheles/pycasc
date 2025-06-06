@@ -1,6 +1,6 @@
 [project]
 name = "pycasclib"
-version = "0.0.1"
+version = "0.0.2"
 description = "Python wrapper for CascLib by Ladislav Zezula"
 authors = [
     { name="Ghostopheles", email="ghost@ghst.tools"}
