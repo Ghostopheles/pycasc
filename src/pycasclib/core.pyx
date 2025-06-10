@@ -100,11 +100,11 @@ cdef void _open_file_handle(void* storage_handle, identifier: Union[str, int, by
     cdef LPCSTR fileDataId
     cdef BYTE[MD5_HASH_SIZE] key
 
-    if open_flags == FileOpenFlags.CASC_OPEN_BY_NAME:
+    if open_flags & FileOpenFlags.CASC_OPEN_BY_NAME:
         key = identifier.encode('utf-8') # file path
         if not casclib.CascOpenFile(storage_handle, key, locale_flags, open_flags, file_handle):
             raise CascLibException(ERROR_PATH_NOT_FOUND)
-    elif open_flags == FileOpenFlags.CASC_OPEN_BY_FILEID:
+    elif open_flags & FileOpenFlags.CASC_OPEN_BY_FILEID:
         fileDataId = <LPCSTR><size_t>identifier
         if not casclib.CascOpenFile(storage_handle, fileDataId, locale_flags, open_flags, file_handle):
             raise CascLibException(ERROR_PATH_NOT_FOUND)
