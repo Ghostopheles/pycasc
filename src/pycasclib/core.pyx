@@ -267,7 +267,7 @@ cdef class CascHandler:
     def read_file_by_id(self, fileID: int, open_flags: Optional[int] = CASC_OPEN_BY_FILEID) -> CascFile:
         return self.read_file(fileID, open_flags)
 
-    def read_file_by_name(self, file_name: int, open_flags: Optional[int] = CASC_OPEN_BY_NAME) -> CascFile:
+    def read_file_by_name(self, file_name: str, open_flags: Optional[int] = CASC_OPEN_BY_NAME) -> CascFile:
         return self.read_file(file_name, open_flags)
 
     def read_file_by_ckey(self, ckey: int, open_flags: Optional[int] = CASC_OPEN_BY_CKEY) -> CascFile:
